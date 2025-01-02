@@ -1,3 +1,3 @@
-def sum(x, y):
-    return x + y
-print(sum(3,5))
+def sum(x, y, z):
+    return x + y +z
+print(sum(3,5, 4))
