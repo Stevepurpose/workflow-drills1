@@ -1,0 +1,21 @@
+name: Trigger drils
+
+on:
+   push:
+     branches:
+        -'main'
+
+   pull_request:
+      branches:
+        -'main'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+      # Checkout the repository code
+         - uses: actions/checkout@v3
+
+         - name: print event details
+           run: |
+             echo "Event name: ${{github.event_name}}"
