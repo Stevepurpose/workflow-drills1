@@ -1,23 +1,23 @@
 name: Trigger drils
 
 on:
-   push:
-     branches:
-        -'main'
-        - 'feature/**'
+  push:
+    branches:
+      - 'main'
+      - 'feature/**'
 
-   pull_request:
-      branches:
-        -'main'
+  pull_request:
+    branches:
+      - 'main'
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
+  build:
+    runs-on: ubuntu-latest
+    steps:
       # Checkout the repository code
-         - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-         - name: print event details
-           run: |
-             echo "Event name: ${{github.event_name}}"
-             echo "Branch name: ${{github.ref}}"
+      - name: Print event details
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Branch name: ${{ github.ref }}"
