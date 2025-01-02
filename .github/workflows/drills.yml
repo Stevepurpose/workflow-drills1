@@ -4,6 +4,7 @@ on:
    push:
      branches:
         -'main'
+        - 'feature/**'
 
    pull_request:
       branches:
@@ -19,3 +20,4 @@ jobs:
          - name: print event details
            run: |
              echo "Event name: ${{github.event_name}}"
+             echo "Branch name: ${{github.ref}}"
