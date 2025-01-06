@@ -1,21 +1,35 @@
-name: Trigger drils
+name: Trigger drills
 
 on:
-   push:
-     branches:
-        -'main'
+  push:
+    branches:
+      - 'main'
 
-   pull_request:
-      branches:
-        -'main'
+  pull_request:
+    branches:
+      - 'main'
+
+  issues:
+    types: [opened, edited, closed, assigned, unassigned, labeled, milestoned]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
+  build:
+    runs-on: ubuntu-latest
+    steps:
       # Checkout the repository code
-         - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-         - name: print event details
-           run: |
-             echo "Event name: ${{github.event_name}}"
+      - name: Print event details
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+
+  handle-issues:
+    if: ${{ github.event_name == 'issues' }}
+    runs-on: ubuntu-latest
+    steps:
+      # Print issue details
+      - name: Print issue details
+        run: |
+          echo "Issue action: ${{ github.event.action }}"
+          echo "Issue title: ${{ github.event.issue.title }}"
+          echo "Issue body: ${{ github.event.issue.body }}"
