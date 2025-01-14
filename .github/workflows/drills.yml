@@ -24,7 +24,7 @@ jobs:
 
       - name: Print event details
         run: |
-          echo "Event name: ${{ github.event_name }}"
+          echo "Event name: ${{ github.event_name }},the current job status is ${{job.status}} "
 
   handle-issues:
     if: ${{ github.event_name == 'issues' }}
@@ -36,6 +36,7 @@ jobs:
           echo "Issue action: ${{ github.event.action }}"
           echo "Issue title: ${{ github.event.issue.title }}"
           echo "Issue body: ${{ github.event.issue.body }}"
+          echo "The current job status is ${{job.status}}"
 
   check-open-issues:
     if: ${{github.event_name=='schedule'}}
