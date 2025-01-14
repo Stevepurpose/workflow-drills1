@@ -13,7 +13,8 @@ on:
     types: [opened, edited, closed, assigned, unassigned, labeled, milestoned]
 
   schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight UTC
+    - cron: '0 0 * * *' # Midnight UTC
+    - cron: '0 12 * * *' # Noon UTC
 
 jobs:
   build:
@@ -24,7 +25,7 @@ jobs:
 
       - name: Print event details
         run: |
-          echo "Event name: ${{ github.event_name }},the current job status is ${{job.status}} "
+          echo "Event name: ${{ github.event_name }}, the current job status is ${{ job.status }}"
 
   handle-issues:
     if: ${{ github.event_name == 'issues' }}
@@ -36,17 +37,20 @@ jobs:
           echo "Issue action: ${{ github.event.action }}"
           echo "Issue title: ${{ github.event.issue.title }}"
           echo "Issue body: ${{ github.event.issue.body }}"
-          echo "The current job status is ${{job.status}}"
+          echo "The current job status is ${{ job.status }}"
 
   check-open-issues:
-    if: ${{github.event_name=='schedule'}}
+    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 0 * * *' }}
     runs-on: ubuntu-latest
+    outputs:
+      open_issues_found: ${{ steps.check.outputs.open_issues_found }}
     steps:
       # Checkout the repository code
       - uses: actions/checkout@v3
 
       # Use GitHub API to check for open issues
       - name: Check for open issues
+        id: check
         run: |
           echo "Checking for open issues..."
           open_issues=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
@@ -54,6 +58,18 @@ jobs:
 
           if [ "$open_issues" -gt 0 ]; then
             echo "There are $open_issues open issues in the repository!"
+            echo "::set-output name=open_issues_found::true"
           else
             echo "No open issues found."
+            echo "::set-output name=open_issues_found::false"
           fi
+          echo "The current job status is ${{ job.status }}"
+
+  issue-reminder:
+    runs-on: ubuntu-latest
+    needs: check-open-issues
+    if: ${{ needs.check-open-issues.outputs.open_issues_found == 'true' && github.event.schedule == '0 12 * * *' }}
+    steps: 
+      - name: Run if open issues found
+        run: |
+          echo "Reminder: There are open issues in the repository!"
