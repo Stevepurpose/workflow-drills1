@@ -66,10 +66,10 @@ jobs:
           echo "The current job status is ${{ job.status }}"
 
   issue-reminder:
-    runs-on: ubuntu-latest
     needs: check-open-issues
-    if: ${{ needs.check-open-issues.outputs.open_issues_found == 'true' && github.event.schedule == '0 12 * * *' }}
-    steps: 
-      - name: Run if open issues found
+    if: ${{ needs.check-open-issues.outputs.open_issues_found == 'true' && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reminder for open issues
         run: |
           echo "Reminder: There are open issues in the repository!"
